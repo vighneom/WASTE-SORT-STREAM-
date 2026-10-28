@@ -1,0 +1,6 @@
+{
+  "name": "SortIQ PureStream — Sensor-Driven Waste Segregation Platform",
+  "description": "High-speed automated optical & NIR sensor platform for real-time waste classification, anti-wishcycling directives, and municipal circularity.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
