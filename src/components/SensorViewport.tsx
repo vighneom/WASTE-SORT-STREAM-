@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Eye, Layers, Scale, Clock, AlertTriangle, ShieldCheck, Zap } from 'lucide-react';
 import { WasteItem, EnvironmentMode } from '../types';
+import { ContaminationAlarmPill } from './ContaminationAlarmPill';
+import { audioAlerts } from '../utils/audioAlerts';
 
 interface SensorViewportProps {
   item: WasteItem;
@@ -25,6 +27,17 @@ export function SensorViewport({
     absorption: number;
   } | null>(null);
 
+  // Play audio alert on item change matching operator feedback specification
+  useEffect(() => {
+    if (item.targetBin === 'BIN_G_HAZARDOUS_DROP') {
+      audioAlerts.playEmergencyHazardAlert();
+    } else if (item.isWishcycleTrap) {
+      audioAlerts.playContaminationWarning();
+    } else {
+      audioAlerts.playVerifiedChime();
+    }
+  }, [item.id, item.targetBin, item.isWishcycleTrap]);
+
   // SVG dimensions for the NIR spectrogram
   const chartWidth = 520;
   const chartHeight = 140;
@@ -40,28 +53,73 @@ export function SensorViewport({
   const pathData = `M ${points.join(' L ')}`;
   const areaData = `${pathData} L ${chartWidth},${chartHeight} L 0,${chartHeight} Z`;
 
+  // Multi-state industrial beacon indicator
+  const beaconState = item.targetBin === 'BIN_G_HAZARDOUS_DROP' || item.isWishcycleTrap
+    ? 'RED_INTERCEPT'
+    : isStreamPaused
+    ? 'YELLOW_PROCESSING'
+    : 'GREEN_VERIFIED';
+
   return (
-    <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 flex flex-col space-y-4 shadow-xl">
+    <div 
+      data-testid="spectro-optical-feed-viewer"
+      className="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 flex flex-col space-y-4 shadow-xl"
+    >
       {/* Viewport Header */}
-      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-3 gap-2">
         <div className="flex items-center gap-2">
           <Eye className="w-5 h-5 text-emerald-400" />
           <h2 className="font-bold text-sm tracking-wide text-white uppercase">
-            Optical & NIR Sensor Ingestion Layer
+            Spectro-Optical Feed Viewer (240 FPS Hardware Strobe)
           </h2>
         </div>
-        <div className="flex items-center gap-3 text-xs font-mono">
-          <span className="text-slate-400 hidden sm:inline">
-            CAMERA: 240 FPS GLOBAL SHUTTER
-          </span>
+
+        {/* Industrial Multi-State LED Beacon (Per Spec UX Strategy) */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 bg-slate-950 px-3 py-1 rounded-lg border border-slate-800 text-[11px] font-mono">
+            <span className="text-slate-400">CHUTE BEACON:</span>
+            <div className="flex items-center gap-1.5">
+              <span
+                className={`w-2.5 h-2.5 rounded-full ${
+                  beaconState === 'RED_INTERCEPT'
+                    ? 'bg-rose-500 animate-ping shadow-[0_0_8px_#f43f5e]'
+                    : 'bg-slate-800'
+                }`}
+                title="Red = Contamination Intercept"
+              />
+              <span
+                className={`w-2.5 h-2.5 rounded-full ${
+                  beaconState === 'YELLOW_PROCESSING'
+                    ? 'bg-amber-400 animate-pulse shadow-[0_0_8px_#fbbf24]'
+                    : 'bg-slate-800'
+                }`}
+                title="Yellow = Processing / Paused"
+              />
+              <span
+                className={`w-2.5 h-2.5 rounded-full ${
+                  beaconState === 'GREEN_VERIFIED'
+                    ? 'bg-emerald-400 shadow-[0_0_8px_#34d399]'
+                    : 'bg-slate-800'
+                }`}
+                title="Green = Pure Verified Material"
+              />
+            </div>
+            <span className="font-bold text-slate-200">
+              {beaconState === 'RED_INTERCEPT' ? 'INTERCEPT' : beaconState === 'YELLOW_PROCESSING' ? 'HOLD' : 'VERIFIED'}
+            </span>
+          </div>
+
           <button
             onClick={onToggleStream}
-            className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded border border-slate-700 transition-colors"
+            className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded border border-slate-700 transition-colors text-xs font-mono"
           >
             {isStreamPaused ? 'Resume' : 'Pause'}
           </button>
         </div>
       </div>
+
+      {/* Contamination Alert Pill */}
+      <ContaminationAlarmPill item={item} />
 
       {/* Hardware Simulation Viewport Screen */}
       <div className="relative h-64 bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex flex-col items-center justify-center p-4">
@@ -70,9 +128,9 @@ export function SensorViewport({
 
         {/* Optical Sensor HUD Corner Elements */}
         <div className="absolute top-3 left-3 font-mono text-[10px] text-slate-400 space-y-0.5 z-10">
-          <div>SEN_STATION: STN-OPT-NIR-04</div>
-          <div>STROBE_WINDOW: 120 µs</div>
-          <div>BANDWIDTH: 900nm - 1700nm</div>
+          <div>CAM_ID: OPT-RGB-702 (240 FPS)</div>
+          <div>STROBE_WINDOW: 120 µs SYNCHRONIZED</div>
+          <div>BANDWIDTH: 900nm - 1700nm NIR</div>
         </div>
 
         <div className="absolute top-3 right-3 font-mono text-xs z-10 flex items-center gap-2">

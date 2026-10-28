@@ -1,19 +1,106 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SortIQ PureStream — Sensor-Driven Waste Segregation Platform</title>
-    <meta name="description" content="High-speed automated optical & NIR sensor platform for real-time waste classification, anti-wishcycling directives, and municipal circularity." />
-    <meta property="og:title" content="SortIQ PureStream — Sensor-Driven Waste Segregation Platform" />
-    <meta property="og:description" content="High-speed automated optical & NIR sensor platform for real-time waste classification, anti-wishcycling directives, and municipal circularity." />
+    <meta
+      name="description"
+      content="Automated optical and NIR hyperspectral waste segregation operating system. Sub-50ms deterministic sorting, anti-wishcycling directives, and municipal circularity."
+    />
+    <meta name="keywords" content="waste segregation, NIR spectroscopy, optical sorting, recycling, circular economy, anti-wishcycling, MRF automation, smart bin, municipal waste management" />
+    <meta name="author" content="Senior Environmental Sustainability Engineering Group" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- OpenGraph Social Cards -->
     <meta property="og:type" content="website" />
+    <meta property="og:title" content="SortIQ PureStream — Sensor-Driven Waste Segregation Platform" />
+    <meta
+      property="og:description"
+      content="Automated optical and NIR hyperspectral waste segregation operating system. Sub-50ms deterministic sorting, anti-wishcycling directives, and municipal circularity."
+    />
+    <meta property="og:site_name" content="SortIQ PureStream OS" />
+
+    <!-- Twitter / X Cards -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="SortIQ PureStream — Sensor-Driven Waste Segregation Platform" />
+    <meta
+      name="twitter:description"
+      content="High-speed optical & NIR sensor platform for real-time waste classification, zero-tolerance wishcycling directives, and municipal circularity."
+    />
+
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Schema.org JSON-LD Structured Data for AI Scanners & Search Engines -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "@id": "#webapp",
+          "name": "SortIQ PureStream OS & Web Portal",
+          "alternateName": "SortIQ PureStream Waste Sensor Platform",
+          "version": "4.2.0-LTS",
+          "applicationCategory": "EnvironmentalApplication",
+          "operatingSystem": "Web, Edge Linux (NVIDIA Jetson / x86_64)",
+          "description": "Deterministic waste classification and pneumatic actuator dispatch platform operating in under 50ms with >95% accuracy using Optical RGB, NIR hyperspectral, and gravimetric sensor fusion.",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "featureList": [
+            "240 FPS Hardware Strobe Optical Camera Processing",
+            "Near-Infrared (NIR) 900nm - 1700nm Polymer Fingerprinting",
+            "Sub-50ms Operational Latency Budget Waterfall",
+            "Anti-Wishcycling Deterministic Routing Directives",
+            "16-Bank Solenoid Pneumatic Actuator Manifold Control",
+            "Webcam & Point-of-Disposal Scanner Interface",
+            "Circular Economy Downstream Lifecycle Mapping"
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Can food-soiled pizza boxes be recycled?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. Cardboard with >15% grease saturation must be routed to compost or residual waste. Grease destroys cellulose fiber hydrogen bonding during hydropulping, causing mill batch rejections."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Why are shiny metallized chip pouches non-recyclable?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Snack chip bags are multi-layer laminates composed of BOPP plastic and vapor-deposited aluminum. They cannot be separated mechanically in standard MRFs and must be routed to residual waste."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What is the operational latency limit of the automated sensor sorting platform?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The platform enforces a strict processing latency budget of less than 50 milliseconds per item (achieving 38.6ms nominal) to prevent conveyor bottlenecks at 2.85 m/s belt speeds."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
   </head>
-  <body class="bg-slate-950 text-slate-100 antialiased font-sans">
+  <body class="bg-slate-950 text-slate-100 antialiased font-sans selection:bg-emerald-500 selection:text-slate-950">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

@@ -2,17 +2,19 @@ import React, { useState } from 'react';
 import { 
   ShieldAlert, 
   Search, 
-  HelpCircle, 
   CheckCircle2, 
   XCircle, 
   RefreshCw, 
   BookOpen, 
+  Factory, 
+  Leaf, 
+  AlertTriangle,
   ArrowRight,
-  Factory,
   Flame,
-  Leaf
+  FileText
 } from 'lucide-react';
 import { ANTI_WISHCYCLING_DIRECTIVES } from '../data/wasteDatabase';
+import { SPEC_TERMINOLOGY_STANDARD } from '../data/specData';
 
 interface WasteLookupItem {
   name: string;
@@ -133,7 +135,7 @@ export function CircularityHub() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-testid="circularity-hub-view">
       {/* Manifesto Header */}
       <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
         <div className="flex items-center gap-2.5">
@@ -171,6 +173,61 @@ export function CircularityHub() {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Anti-Wishcycling Terminology Standard (From User Spec) */}
+      <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="flex items-center gap-2 text-sm font-bold text-white uppercase font-mono">
+            <FileText className="w-4 h-4 text-amber-400" />
+            <span>Anti-Wishcycling Terminology Standard</span>
+          </div>
+          <span className="text-xs font-mono text-slate-400">
+            DIN SPEC & MUNICIPAL STANDARD
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          {/* Forbidden Ambiguous Terms */}
+          <div className="bg-slate-950 p-4 rounded-xl border border-rose-500/30 space-y-3">
+            <div className="text-rose-400 font-bold uppercase tracking-wider flex items-center gap-1.5 font-mono">
+              <XCircle className="w-4 h-4" />
+              <span>Prohibited Ambiguous Labels</span>
+            </div>
+            <div className="space-y-2">
+              {SPEC_TERMINOLOGY_STANDARD.forbidden_ambiguous_terms.map((item, idx) => (
+                <div key={idx} className="p-2.5 rounded bg-slate-900/80 border border-slate-800">
+                  <div className="font-semibold text-white line-through decoration-rose-500">
+                    "{item.term}"
+                  </div>
+                  <div className="text-[11px] text-slate-400 mt-1 font-mono">
+                    Problem: {item.issue}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Mandatory Deterministic Terms */}
+          <div className="bg-slate-950 p-4 rounded-xl border border-emerald-500/30 space-y-3">
+            <div className="text-emerald-400 font-bold uppercase tracking-wider flex items-center gap-1.5 font-mono">
+              <CheckCircle2 className="w-4 h-4" />
+              <span>Mandatory Deterministic Directives</span>
+            </div>
+            <div className="space-y-2">
+              {SPEC_TERMINOLOGY_STANDARD.mandatory_deterministic_terms.map((item, idx) => (
+                <div key={idx} className="p-2.5 rounded bg-slate-900/80 border border-slate-800">
+                  <div className="font-semibold text-emerald-300">
+                    "{item.term}"
+                  </div>
+                  <div className="text-[11px] text-cyan-400 mt-1 font-mono">
+                    Target Stream: {item.target}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 

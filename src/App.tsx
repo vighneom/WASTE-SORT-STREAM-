@@ -22,14 +22,19 @@ import { ActuatorMatrix } from './components/ActuatorMatrix';
 import { CameraSensorScanner } from './components/CameraSensorScanner';
 import { CircularityHub } from './components/CircularityHub';
 import { HardwareCalibration } from './components/HardwareCalibration';
+import { ClassificationAnalytics } from './components/ClassificationAnalytics';
+import { ApiPayloadInspectorModal } from './components/ApiPayloadInspectorModal';
+import { audioAlerts } from './utils/audioAlerts';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'feed' | 'scanner' | 'circularity' | 'calibration'>('feed');
+  const [activeTab, setActiveTab] = useState<'feed' | 'analytics' | 'scanner' | 'circularity' | 'calibration'>('feed');
   const [currentMode, setCurrentMode] = useState<EnvironmentMode>('INDUSTRIAL_MRF');
   const [itemIndex, setItemIndex] = useState(0);
   const [isStreamPaused, setIsStreamPaused] = useState(false);
   const [beltSpeedMps, setBeltSpeedMps] = useState(2.85);
   const [airPressureBar, setAirPressureBar] = useState(8.2);
+  const [isApiInspectorOpen, setIsApiInspectorOpen] = useState(false);
+  const [isAudioMuted, setIsAudioMuted] = useState(false);
 
   // System telemetry metrics
   const [metrics, setMetrics] = useState<SystemMetrics>({
@@ -81,8 +86,17 @@ export default function App() {
     }
   };
 
+  const handleToggleAudio = () => {
+    const nextMuted = !isAudioMuted;
+    setIsAudioMuted(nextMuted);
+    audioAlerts.setMuted(nextMuted);
+  };
+
   return (
-    <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100 font-sans selection:bg-emerald-500 selection:text-slate-950">
+    <div 
+      className="min-h-screen flex flex-col bg-slate-950 text-slate-100 font-sans selection:bg-emerald-500 selection:text-slate-950"
+      data-testid="app-root"
+    >
       {/* 3-Zone Top Navigation Bar */}
       <TopBar
         activeTab={activeTab}
@@ -90,6 +104,9 @@ export default function App() {
         onTriggerNextItem={handleNextItem}
         isStreamPaused={isStreamPaused}
         onToggleStream={() => setIsStreamPaused(!isStreamPaused)}
+        onOpenApiInspector={() => setIsApiInspectorOpen(true)}
+        isAudioMuted={isAudioMuted}
+        onToggleAudio={handleToggleAudio}
       />
 
       {/* Main Container */}
@@ -155,9 +172,9 @@ export default function App() {
           </div>
         </div>
 
-        {/* Tab 1: Live Sensor Feed View */}
+        {/* Tab 1: Live Sensor Feed View (/dashboard/live-stream) */}
         {activeTab === 'feed' && (
-          <div className="space-y-6">
+          <div className="space-y-6" data-testid="live-feed-tab">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               {/* Left Column: Optical & NIR Sensor Viewport (7 Cols) */}
               <div className="lg:col-span-7">
@@ -188,17 +205,26 @@ export default function App() {
           </div>
         )}
 
-        {/* Tab 2: Camera & Photo Scanner */}
+        {/* Tab 2: Purity & Yield Analytics (/dashboard/classification-analytics) */}
+        {activeTab === 'analytics' && (
+          <ClassificationAnalytics
+            currentPurityPercent={metrics.streamPurityRate}
+            totalInterceptsCount={metrics.wishcyclingInterceptedCount}
+            totalItemsCount={metrics.totalItemsSorted}
+          />
+        )}
+
+        {/* Tab 3: Camera & Photo Scanner (/portal/user-guidance) */}
         {activeTab === 'scanner' && (
           <CameraSensorScanner onItemClassified={handleClassifiedItem} />
         )}
 
-        {/* Tab 3: Anti-Wishcycling & Circularity Directory */}
+        {/* Tab 4: Anti-Wishcycling & Circularity Directory */}
         {activeTab === 'circularity' && (
           <CircularityHub />
         )}
 
-        {/* Tab 4: Hardware Diagnostics & Sensor Calibration */}
+        {/* Tab 5: Hardware Diagnostics & Sensor Calibration (/admin/hardware-calibration) */}
         {activeTab === 'calibration' && (
           <HardwareCalibration
             airPressureBar={airPressureBar}
@@ -209,11 +235,18 @@ export default function App() {
         )}
       </main>
 
+      {/* API Data Contract Schema Modal */}
+      <ApiPayloadInspectorModal
+        isOpen={isApiInspectorOpen}
+        onClose={() => setIsApiInspectorOpen(false)}
+        currentItem={currentItem}
+      />
+
       {/* Engineering Footer */}
       <footer className="border-t border-slate-800 bg-slate-950 px-6 py-4 mt-auto text-xs text-slate-400">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
           <div>
-            SortIQ PureStream OS &bull; Optical, NIR & Gravimetric Automated Waste Segregation
+            SortIQ PureStream OS v4.2.0-LTS &bull; Optical, NIR & Gravimetric Automated Waste Segregation
           </div>
           <div className="flex items-center gap-4 font-mono text-[11px] text-slate-400">
             <span>ISO 15270 (Plastics Recovery)</span>
